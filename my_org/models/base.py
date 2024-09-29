@@ -23,6 +23,7 @@ class BaseModelSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
 
+
 # See https://www.dataquest.io/blog/how-to-use-python-data-classes/
 # frozen = True would make that attributes cannot be updated after a class is instantiated
 @dataclass(order=True, frozen=False)

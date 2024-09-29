@@ -6,4 +6,3 @@ import os
 class MongoConfig:
     ORG_DB = os.environ.get("ORG_DB") or "my_org"
     ORG_COLLECTION = os.environ.get("ORG_COLLECTION") or "organizations"
-

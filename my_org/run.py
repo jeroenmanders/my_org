@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from my_org import create_app
 
-from my_org.routes import organization, root
 
 load_dotenv()
 app = create_app()
