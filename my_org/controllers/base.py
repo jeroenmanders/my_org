@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar
-from my_org.models.base import BaseModel, BaseModelSchema
-from infrastructure.db.mongodb import mongodb
 from bson.objectid import ObjectId
+from my_org.models.base import BaseModel, BaseModelSchema
+from my_org.infrastructure.db.mongodb import mongodb
 
 Model = TypeVar("Model", bound=BaseModel)
 
@@ -21,19 +21,19 @@ class Controller(Generic[Model]):
         result["_id"] = str(result["_id"])
         return result
 
-    def get_all(self) -> list[Model]:
-        result = mongodb.organizations.find()
-        return list(result)
-
-    def update(self, model: Model) -> Model:
-        pass
+    def update(self, model_id: str, model: Model, schema: BaseModelSchema) -> Model:
+        model_dict = schema.dump(model)
+        fltr = {"_id": ObjectId(model_id)}
+        new_values = {"$set": model_dict}
+        _ = self._get_col().update_one(fltr, new_values)
+        return self.get(model_id)
 
     def create(self, model: Model, schema: BaseModelSchema) -> Model:
         model_dict = schema.dump(model)
 
         result = self._get_col().insert_one(model_dict)
         if not result.inserted_id:
-            raise Exception("Insert failed.")
+            raise Exception("Insert failed.")  # pylint: disable=W0719
 
         model_dict["_id"] = str(model_dict["_id"])
         return model_dict

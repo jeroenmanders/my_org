@@ -9,7 +9,6 @@ class CreatedUpdatedMixin:
     created_at: datetime  # = datetime.now() -   of subclasses would need to have defaults
 
     def __post_init__(self) -> None:
-        self.sort_index = self.name
         if self.updated_at is None:
             self.updated_at = datetime.now()
         if self.created_at is None:
@@ -17,29 +16,33 @@ class CreatedUpdatedMixin:
 
 
 class BaseModelSchema(Schema):
-    id = fields.Str(dump_only=True)
-    name = fields.Str(required=True)
-    tags = fields.Dict(required=False)
-    created_at = fields.DateTime(dump_only=True)
-    updated_at = fields.DateTime(dump_only=True)
+    _id = fields.Str(dump_only=False, required=True)
+    name = fields.Str(dump_only=False, required=True)
+    tags = fields.Dict(dump_only=False, required=False)
+    created_at = fields.DateTime(dump_only=False, required=True)
+    updated_at = fields.DateTime(dump_only=False, required=True)
 
 
 # See https://www.dataquest.io/blog/how-to-use-python-data-classes/
 # frozen = True would make that attributes cannot be updated after a class is instantiated
 @dataclass(order=True, frozen=False)
 class BaseModel(CreatedUpdatedMixin):
-    id: str
+    _id: str
     name: str
     tags: dict[str, str]
     sort_index: str = field(init=False, repr=False)
 
-    def __init__(self, **kwargs):
-        for arg in kwargs:
-            # TODO: annotations only contains the fields of the subclass and not the fields of the superclass
+    def __init__(self, **kwargs) -> None:
+        # first process the kwargs so that the class dict is populated
+        for arg in kwargs.items():
+            # TODO: annotations only contains the fields of the subclass and # pylint: disable=W0511
+            #  not the fields of the superclass
             # if arg not in self.__annotations__:
             #     raise TypeError(f"__init__() got an unexpected keyword argument '{arg}'")
 
-            self.__setattr__(arg, kwargs[arg])
+            self.__setattr__(arg[0], arg[1])
+
+        super().__init__(updated_at=datetime.now(), created_at=datetime.now())  # TODO, get values from **kwargs?
 
     def __post_init__(self) -> None:
         self.sort_index = self.name

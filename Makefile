@@ -40,11 +40,11 @@ test-cov:
 .PHONY: lint
 lint:
 	echo "Linting disabled for now"
-#	poetry run flake8 --jobs 4 --statistics --show-source $(CODE) tests
-#	poetry run pylint --jobs 4 --rcfile=setup.cfg $(CODE)
-#	poetry run mypy $(CODE) tests
-#	poetry run black --target-version py38 --skip-string-normalization --check $(CODE) tests
-#	poetry run pytest # --fixtures
+	poetry run flake8 --jobs 4 --statistics --show-source $(CODE) tests
+	poetry run pylint --jobs 4 --rcfile=setup.cfg $(CODE)
+	#poetry run mypy $(CODE) tests TODO: fix mypy errors
+	poetry run black --target-version py38 --skip-string-normalization --check $(CODE) tests
+	poetry run pytest # --fixtures
 
 .PHONY: format
 format:

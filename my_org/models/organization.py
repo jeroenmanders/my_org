@@ -19,5 +19,5 @@ class OrganizationSchema(BaseModelSchema):
     email = fields.Email(required=True)
 
     @post_load
-    def make_organization(self, data, **kwargs) -> Organization:
+    def make_organization(self, data, **kwargs) -> Organization:  # pylint: disable=W0613
         return Organization(**data)
